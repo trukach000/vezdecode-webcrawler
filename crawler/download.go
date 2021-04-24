@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strings"
+	gourl "net/url"
 	"time"
 	"vezdecode-webcrawler/utils"
 
@@ -78,9 +78,17 @@ func (c *Crawler) analyzeURL(
 	*visited = append(*visited, url)
 	if c.recursive {
 		links := c.pageLinks(nil, page)
-
+		baseUrlObj, err := gourl.Parse(baseurl)
+		if err != nil {
+			return result, fmt.Errorf("can't parse baseurl: %s, err: %s", baseurl, err)
+		}
 		for _, link := range links {
-			if !utils.Contains(*visited, link) && strings.HasPrefix(link, baseurl) {
+			linkObj, err := gourl.Parse(link)
+			if err != nil {
+				log.Printf("can't parse url: %s, err: %s", url, err)
+				continue
+			}
+			if !utils.Contains(*visited, link) && linkObj.Hostname() == baseUrlObj.Hostname() {
 				logrus.Debugf("analyze nested link: %s", link)
 				r, err := c.analyzeURL(link, baseurl, visited)
 				if err != nil {

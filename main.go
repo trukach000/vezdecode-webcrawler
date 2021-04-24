@@ -91,7 +91,7 @@ func main() {
 }
 
 func printResults(visited []string, res []crawler.AnalyzeResult) {
-	fmt.Printf("RESULT:\n Visited links (%d):\n", len(visited))
+	fmt.Printf("RESULT:\nVisited links (%d):\n", len(visited))
 	for _, vl := range visited {
 		fmt.Printf("ulr: %s\n", vl)
 	}
